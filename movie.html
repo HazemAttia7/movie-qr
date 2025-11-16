@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>عرض الفيلم</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #FF100F 0%, #FFC070 100%);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255,255,255,0.15);
+      padding: 24px;
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      word-wrap: break-word;
+    }
+    .loading {
+      text-align: center;
+      font-size: 20px;
+    }
+    .error {
+      background: rgba(255,0,0,0.2);
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="content" class="loading">جاري التحميل...</div>
+  </div>
+
+  <script>
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        name: params.get('name') || params.get('n'),
+        image: params.get('image') || params.get('img') || params.get('i')
+      };
+    }
+
+    function decodeIfNeeded(str) {
+      try {
+        const decoded = atob(str);
+        return decodeURIComponent(decoded);
+      } catch (e) {
+        return decodeURIComponent(str);
+      }
+    }
+
+    function displayMovie() {
+      const params = getUrlParams();
+      const contentDiv = document.getElementById('content');
+
+      if (!params.name || !params.image) {
+        contentDiv.innerHTML = `
+          <div class="error">
+            <h2>⚠️ خطأ</h2>
+            <p>لم يتم إرسال بيانات الفيلم بشكل صحيح</p>
+          </div>
+        `;
+        return;
+      }
+
+      const movieName = decodeIfNeeded(params.name);
+      const movieImage = decodeIfNeeded(params.image);
+
+      document.title = movieName;
+
+      contentDiv.innerHTML = `
+        <img src="${movieImage}" alt="${movieName}" loading="lazy" 
+             onerror="this.src='https://via.placeholder.com/400x600?text=صورة+غير+متاحة'"/>
+        <h1>${movieName}</h1>
+      `;
+    }
+
+    window.addEventListener('DOMContentLoaded', displayMovie);
+  </script>
+</body>
+</html>
+
