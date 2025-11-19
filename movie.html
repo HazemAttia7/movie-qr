@@ -88,31 +88,34 @@
       }
     }
 
-    function displayMovie() {
-      const params = getUrlParams();
-      const contentDiv = document.getElementById('content');
+   function displayMovie() {
+  const params = getUrlParams();
+  const contentDiv = document.getElementById('content');
 
-      if (!params.name || !params.image) {
-        contentDiv.innerHTML = `
-          <div class="error">
-            <h2>⚠️ خطأ</h2>
-            <p>لم يتم إرسال بيانات الفيلم بشكل صحيح</p>
-          </div>
-        `;
-        return;
-      }
+  if (!params.name) {  // ← بس نتحقق من الاسم
+    contentDiv.innerHTML = `
+      <div class="error">
+        <h2>⚠️ خطأ</h2>
+        <p>لم يتم إرسال بيانات الفيلم بشكل صحيح</p>
+      </div>
+    `;
+    return;
+  }
 
-      const movieName = decodeIfNeeded(params.name);
-      const movieImage = decodeIfNeeded(params.image);
+  const movieName = decodeIfNeeded(params.name);
+  const movieImage = params.image ? decodeIfNeeded(params.image) : null;  // ← اختياري
 
-      document.title = movieName;
+  document.title = movieName;
 
-      contentDiv.innerHTML = `
+  // لو فيه صورة نعرضها، لو مفيش نعرض الاسم بس
+  contentDiv.innerHTML = movieImage 
+    ? `
         <img src="${movieImage}" alt="${movieName}" loading="lazy" 
-             onerror="this.src='https://via.placeholder.com/400x600?text=صورة+غير+متاحة'"/>
+             onerror="this.style.display='none'"/>
         <h1>${movieName}</h1>
-      `;
-    }
+      `
+    : `<h1>${movieName}</h1>`;  // ← لو مفيش صورة
+}
 
     window.addEventListener('DOMContentLoaded', displayMovie);
   </script>
